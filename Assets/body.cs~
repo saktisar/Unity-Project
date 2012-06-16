@@ -1,0 +1,12 @@
+using UnityEngine;
+
+public class Test : MonoBehaviour
+{
+    void Start() 
+    {
+        Debug.Log("Stand by ready");
+        Debug.LogWarning("Warning");
+        Debug.LogError("Error");
+    }
+}
+
