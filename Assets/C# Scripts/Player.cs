@@ -8,20 +8,33 @@ public class Player : MonoBehaviour{
 
 	//ミサイルをいれる変数
 	GameObject missaile;
-
-	//テストコード
-	//TPS視点のカメラをいれる変数
-	//GameObject tps_camera = GameObject.Find("TPS Camera");
+		
+	//TPSカメラをいれる変数
+	GameObject tps_camera;
+		
+	//FPSカメラを入れる変数
+	GameObject fps_camera;
 
 	//スピードを管理する変数
 	float speed = 600.0f;
 
 	//戦闘時に得た金を管理する変数
 	int gold = 0;
+
 	//敵を倒した時に得られる金の変数
 	int enemy_gold = 0;
+
+	//変数を初期化する変数？
+	void Awake(){
+		tps_camera = GameObject.Find("TPS Camera");
+		fps_camera = GameObject.Find("FPS Camera");
+	}
+
 	void Start()
 	{
+		//カメラの設定
+		tps_camera.camera.enabled = true;
+		fps_camera.camera.enabled = false;
 		//テストコード
 		//スピードを0に初期化
 		speed = 0.0f;
@@ -119,6 +132,7 @@ public class Player : MonoBehaviour{
 		//テストコード・デバッグモード
 		//自分の機体の位置
 		GUI.Label(new Rect(5,45, 400, 50),"Position:" + transform.position);
-
 	}
 }
+
+
