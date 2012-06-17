@@ -5,31 +5,42 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour {
 	GameObject enemy;
-	// Use this for initialization
-	void Start () {
-		//オブジェクトを削除するために必要なおまじない
-		collider.isTrigger = true;
+
+	//弾をいれる変数
+	GameObject gun;
+
+	//ミサイルをいれる変数
+	GameObject missaile;
+				
+	//スピードを管理する変数
+	float speed = 600.0f;
+	
+	//初期化処理
+	void Awake(){
+		gun = GameObject.Find("Gun");
+		missaile = GameObject.Find("Missaile");
+	}
+
+	//updateの直前に起動する関数
+	void start () {
+		
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	// update is called once per frame
+	void update () {
 		if(Input.GetKeyDown("f")){
-			//GameObject変数"bullet"の初期位置を、playerの場所に指定
+			//gameobject変数"bullet"の初期位置を、Enemyの場所に指定
 			transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
 		}
 	}
-	
-	void OnCollisionEnter(Collision col)
-	{
-		//テストコード
-		print("test1");
-		//もし、Missaileか、Gunがあたったならば、
-		if(col.gameObject.CompareTag("Missaile") || col.gameObject.CompareTag("Gun")){
-			//テストコード
-			print("test2");
-			//敵を削除
-			Destroy(this);
-		}
+
+	void OnGUI(){
+		//テストコード・デバッグモード
+		//敵の機体の位置
+		GUI.Label(new Rect(  5, 60, 400, 50),"EnemyProsition:" + transform.position);
 	}
 
+	void OnColisionEnter(){
+		print("test");
+	}
 }

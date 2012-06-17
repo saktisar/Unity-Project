@@ -1,6 +1,7 @@
 //プレイヤー（機体）につけるスクリプト
 
 using UnityEngine;
+using System.Collections;
 
 public class Player : MonoBehaviour{
 	//弾をいれる変数
@@ -24,26 +25,35 @@ public class Player : MonoBehaviour{
 	//敵を倒した時に得られる金の変数
 	int enemy_gold = 0;
 
-	//変数を初期化する変数？
+	//変数を初期化する関数
 	void Awake(){
+		//tpsカメラを探す
 		tps_camera = GameObject.Find("TPS Camera");
+		//fpsカメラを探す
 		fps_camera = GameObject.Find("FPS Camera");
 	}
 
 	void Start()
 	{
 		//カメラの設定
+		//tpsカメラを有効化
 		tps_camera.camera.enabled = true;
+		//fpsカメラを無効化
 		fps_camera.camera.enabled = false;
+
 		//テストコード
 		//スピードを0に初期化
 		speed = 0.0f;
+
 		//playerを0,0,0に場所を初期化
 		transform.position = Vector3.zero;
 	}
 
 	void Update()
 	{	
+		//テストコード
+		//print("test");
+	
 		//playerを移動
 		transform.Translate(0.0f,0.0f,speed/600.0f);
 		//テストコード
@@ -52,7 +62,7 @@ public class Player : MonoBehaviour{
 		
 		//もし、"i"を押し続けていれば、
 		if(Input.GetKey("i")){
-			//GameObject変数"bullet"に、Object"Bullet"を代入。
+			//GameObject変数"gun"に、Object"Gun"を代入。
 			gun = Object.Instantiate(GameObject.Find("Gun")) as GameObject;
 			//GameObject変数"bullet"の初期位置を、playerの場所に指定
 			gun.transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
@@ -70,24 +80,32 @@ public class Player : MonoBehaviour{
 		if(Input.GetKey("w")){
 			//上へ移動
 			transform.Translate(0.0f,1.0f,0.0f);
+			//上へ少し回転β
+			transform.Rotate( 1, 0, 0);
 		}
 
 		//下移動(s)
 		if(Input.GetKey("s")){
 			//下へ移動
 			transform.Translate(0.0f,-1.0f,0.0f);
+			//下に少し回転β
+			transform.Rotate( -1, 0, 0);
 		}
 		
 		//右移動(d)
 		if(Input.GetKey("d")){
 			//右へ移動
 			transform.Translate(1.0f,0.0f,0.0f);
+			//右に少し回転β
+			transform.Rotate( 0, 0, 1);
 		}
 		
 		//左移動(a)
 		if(Input.GetKey("a")){
 			//左へ移動
 			transform.Translate(-1.0f,0.0f,0.0f);
+			//左に少し回転β
+			transform.Rotate( 0, 0, -1);			
 		}
 
 		//スピードアップ(e)
@@ -119,19 +137,50 @@ public class Player : MonoBehaviour{
 			//playerを0,0,0に場所を初期化
 			transform.position = Vector3.zero;
 		}
+		
+		//カメラの変更(Space)
+		if(Input.GetKeyDown(KeyCode.Space)){
+			//tps_cameraがONならば、
+			if(tps_camera.camera.enabled == true){
+				//tpsカメラをOFF、
+				tps_camera.camera.enabled = false;
+				//fpsカメラをONにする。
+				fps_camera.camera.enabled = true;
+			//tps_cameraがOFFならば、
+			}else if(tps_camera.camera.enabled == false){
+				//tpsカメラをON、
+				tps_camera.camera.enabled = true;
+				//fpsカメラをOFFにする。
+				fps_camera.camera.enabled = false;
+			}
+		}
 	}
 
 	void OnGUI()
 	{
 		//スピードメーター
-		GUI.Label(new Rect(5, 0, 400, 50),"Speed:" + speed.ToString());
+		GUI.Label(new Rect(  5,  0, 400, 50),"Speed:" + speed.ToString());
 		//戦闘時に得た金
-		GUI.Label(new Rect(5,15, 400, 50),"Gold:" + gold.ToString());
+		GUI.Label(new Rect(  5, 15, 400, 50),"Gold:" + gold.ToString());
 		//敵を倒したときに得られる金
-		GUI.Label(new Rect(5,30, 400, 50),"EnemyGold:" + enemy_gold.ToString());
+		GUI.Label(new Rect(  5, 30, 400, 50),"EnemyGold:" + enemy_gold.ToString());
 		//テストコード・デバッグモード
 		//自分の機体の位置
-		GUI.Label(new Rect(5,45, 400, 50),"Position:" + transform.position);
+		GUI.Label(new Rect(  5, 45, 400, 50),"Position:" + transform.position);
+		//テストコード
+		//操作説明
+		GUI.Label(new Rect(560,  0, 400, 50),"i:Gun");
+		GUI.Label(new Rect(560, 15, 400, 50),"l:Missaile");
+		GUI.Label(new Rect(560, 30, 400, 50),"w:Up");
+		GUI.Label(new Rect(560, 45, 400, 50),"s:Down");
+		GUI.Label(new Rect(560, 60, 400, 50),"d:Right");
+		GUI.Label(new Rect(560, 75, 400, 50),"a:Left");
+		GUI.Label(new Rect(560, 90, 400, 50),"e:SpeedUp");
+		GUI.Label(new Rect(560,105, 400, 50),"q:SpeedDown");
+		GUI.Label(new Rect(560,120, 400, 50),"space:TPS/FPS");
+		//GUI.Label(new Rect(5,210, 400, 50),"i:銃");
+		//GUI.Label(new Rect(5,225, 400, 50),"i:銃");
+		//GUI.Label(new Rect(5,240, 400, 50),"i:銃");				
 	}
 }
 

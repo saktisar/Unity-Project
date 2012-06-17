@@ -8,6 +8,6 @@ public class Gun : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.Translate(0.0f,-0.02f,1.0f);
+		transform.Translate(0.0f,-0.02f,2.0f);
 	}
 }
