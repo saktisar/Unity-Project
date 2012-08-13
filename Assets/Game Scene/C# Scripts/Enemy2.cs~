@@ -1,0 +1,64 @@
+//Enemy(敵)のスクリプト
+
+using UnityEngine;
+using System;
+using System.Collections;
+
+public class Enemy1 : MonoBehaviour {
+	//playerを入れる変数
+	public GameObject player;
+
+	GameObject enemy;
+
+	//弾をいれる変数
+	public GameObject gun;
+
+	//ミサイルをいれる変数
+	public GameObject missaile;
+				
+	//スピードを管理する変数
+	float speed = 600.0f;
+	
+	//とりあえず除外
+	/*
+	//初期化処理
+	void Awake(){
+		//なし
+		print("Enemy.cs:In Awake");
+	}
+	*/
+	
+	//playerとenemyの距離(キロメートル)
+	double km;
+
+	//updateの直前に起動する関数
+	void Start() {
+		print("Enemy.cs:In start");
+		//場所の初期化
+		transform.position = new Vector3(0,100,1200);
+		transform.Rotate(0, 180, 0);
+	}
+	
+	// update is called once per frame
+	void Update () {
+		//Enemyの移動
+		transform.Translate(0,0,speed/1000.0f);
+
+		//P1（プレイヤー座標）-P2（敵座標）＝P'
+		km = Math.Abs(player.transform.position.x - transform.position.x) * speed;
+		//if(km < 
+
+	}
+
+	void OnGUI(){
+		//テストコード・デバッグモード
+		//敵の機体の位置
+		GUI.Label(new Rect(  5, 60, 400, 50),"EnemyProsition:" + transform.position);
+	}
+
+	void OnCollisionEnter(Collision col){
+		if(col.gameObject.name == "Missaile(Clone)" || col.gameObject.name == "Gun(Clone)"){
+			Destroy(gameObject);
+		}
+	}
+}

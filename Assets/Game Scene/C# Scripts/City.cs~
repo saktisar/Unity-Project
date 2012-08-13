@@ -1,0 +1,37 @@
+using UnityEngine;
+using System.Collections;
+
+public class City : MonoBehaviour {
+	GameObject enemy[16];
+
+	void Awake(){
+		enemy[0] = (GameObject)Resources.Load("Prefabs/Enemy");
+		//enemy[1] = (GameObject)Resources.Load("Enemy");
+		//enemy[2] = (GameObject)Resources.Load("Enemy");
+		//enemy[3] = (GameObject)Resources.Load("Enemy");
+		//enemy[4] = (GameObject)Resources.Load("Enemy");
+		//enemy[5] = (GameObject)Resources.Load("Enemy");
+		//enemy[6] = (GameObject)Resources.Load("Enemy");
+		//enemy[7] = (GameObject)Resources.Load("Enemy");
+
+		enemy[0] = Instantiate(enemy[0],new Vector3(-5,-5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[1] = Instantiate(enemy[1],new Vector3(5,0,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[2] = Instantiate(enemy[2],new Vector3(-5,0,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[3] = Instantiate(enemy[3],new Vector3(0,5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[4] = Instantiate(enemy[4],new Vector3(5,5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[5] = Instantiate(enemy[5],new Vector3(-5,5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[6] = Instantiate(enemy[6],new Vector3(0,-5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[7] = Instantiate(enemy[7],new Vector3(5,-5,20),Quaternion.Euler(0,0,0)) as GameObject;
+
+	}
+
+	// Use this for initialization
+	void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () {
+	
+	}
+}

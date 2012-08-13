@@ -1,0 +1,487 @@
+//プレイヤー（機体）につけるスクリプト
+
+using UnityEngine;
+using System.Collections;
+
+public class Player : MonoBehaviour{
+	//弾をいれる変数
+	public GameObject gun;
+
+	//ミサイルをいれる変数
+	public GameObject missaile;
+		
+	//TPSカメラをいれる変数
+	GameObject tps_camera;
+
+	//FPSカメラを入れる変数
+	GameObject fps_camera;
+
+	//enemyオブジェクトを入れる変数
+	public static GameObject[] enemy = new GameObject[8];
+
+	//スピードを管理する変数
+	float speed = 600.0f;
+
+	//戦闘時に得た金を管理する変数
+	int gold = 0;
+
+	//敵を倒した時に得られる金の変数
+	int enemy_gold = 0;
+
+	//ミサイルの照準を代入
+	Texture2D mark;
+
+	// 敵につくマークを作成
+	Texture2D enemy_mark;
+
+	//ロックオン時敵につくマーク
+	Texture2 rockon;
+
+	// 追加
+	// 相手のスクリーン座標
+	Vector3[] coordinate_enemy = new Vector3[8];
+
+	// 自分と相手の距離
+	float[] between_distance = new float[8];
+
+	//プレイヤーがどちらの方向を向いているか
+	//+ = true
+	//- = false
+	bool player_direction;
+
+	// 敵オブジェクトスクリーン座標バックアップ
+	Vector3[] coordinate_enemy_backup = new Vector3[8];
+
+	// 可視状態の敵を判別する
+	bool[] enemy_can_display = new bool[8];
+
+	// ロックオンできる物体を代入
+	bool[] enemy_can_rockon = new bool[8];
+
+	// ロックオンしている物体を代入
+	bool[] enemy_rockon = new bool[8];
+
+	// ロックオンできる数を取得
+	//int can_rockon;
+
+	// ロックオン時のiを保持する
+	public static int i_num;
+
+	//変数を初期化する関数
+	void Awake(){
+		//一応追加
+		Debug.Log("Player.cs:In Awake");
+		//ミサイルの照準をロード
+		mark = (Texture2D)Resources.Load("Image/Sighting");
+		//敵につくマークをロード
+		enemy_mark = (Texture2D)Resources.Load("Image/EnemyMark");
+		//ロックオンマークをロード
+		rockon = (Texture2D)Resources.Load("Image/Rockon");
+
+		// テストコード
+		// EnemyGameObjectを代入
+		enemy[0] = (GameObject)Resources.Load("Prefabs/Enemy");
+		enemy[1] = (GameObject)Resources.Load("Prefabs/Enemy");
+		enemy[2] = (GameObject)Resources.Load("Prefabs/Enemy");
+		enemy[3] = (GameObject)Resources.Load("Prefabs/Enemy");
+		//enemy[4] = (GameObject)Resources.Load("Prefabs/Enemy");
+		//enemy[5] = (GameObject)Resources.Load("Prefabs/Enemy");
+		//enemy[6] = (GameObject)Resources.Load("Prefabs/Enemy");
+		//enemy[7] = (GameObject)Resources.Load("Prefabs/Enemy");
+
+		// テストコード
+		// 敵オブジェクトの複製
+		enemy[0] = Instantiate(enemy[0],new Vector3(-5,-5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		enemy[1] = Instantiate(enemy[1],new Vector3(5,0,20),Quaternion.Euler(0,0,0)) as GameObject;
+		enemy[2] = Instantiate(enemy[2],new Vector3(-5,0,20),Quaternion.Euler(0,0,0)) as GameObject;
+		enemy[3] = Instantiate(enemy[3],new Vector3(0,5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[4] = Instantiate(enemy[4],new Vector3(5,5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[5] = Instantiate(enemy[5],new Vector3(-5,5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[6] = Instantiate(enemy[6],new Vector3(0,-5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		//enemy[7] = Instantiate(enemy[7],new Vector3(5,-5,20),Quaternion.Euler(0,0,0)) as GameObject;
+		
+		//tpsカメラを探す
+		tps_camera = GameObject.Find("TPS Camera");
+		//fpsカメラを探す
+		fps_camera = GameObject.Find("FPS Camera");
+	
+		/* gun,missaile,enemyオブジェクトは、Unityではりつけ。*/
+		
+		//テストコード
+		//スピードを0に初期化
+		speed = 0.0f;
+
+		// 敵ベクトルバックアップ初期化
+		for(int i = 0;i < 8;i++){
+			//初期化
+		 	coordinate_enemy[i] = new Vector3(0.0f,0.0f,0.0f);
+			enemy_can_display[i] = false;
+			enemy_can_rockon[i] = false;
+		}
+
+		// ロックオンできる数
+		// can_rockon = 1;
+
+		// ロックオン
+		// look_num = 0;
+	
+	}
+
+	void Start()
+	{
+		//tpsカメラを有効化
+		tps_camera.camera.enabled = true;
+		//fpsカメラを無効化
+		fps_camera.camera.enabled = false;
+
+		//照準をリサイズ
+		//mark.Resize(128,128);
+		//mark.Apply();
+	
+		//テストコード
+		//playerを0,0,0に場所を初期化
+		transform.position = Vector3.zero;
+	}
+
+	void Update()
+	{	
+		//テストコード
+		//print("test");
+	
+		//playerを移動
+		transform.Translate(0,0,speed/1000.0f);		
+
+		//テストコード
+		//カメラの移動
+		//tps_camera.transform.Translate(0.0f,0.0f,speed);
+		
+		//もし、"i"を押し続けていれば、
+		if(Input.GetKey("i")){
+			//gunオブジェクトのクローンを生成
+			Instantiate(gun,transform.position,transform.rotation);
+		}
+		//もし、"l"を押していれば、
+		if(Input.GetKeyDown("l")){
+			//missaileオブジェクトのクローンを生成
+			Instantiate(missaile,transform.position,transform.rotation);
+		}
+
+		//移動の設定
+		//上移動(w)
+		if(Input.GetKey("w")){
+			//上へ移動
+			//transform.Translate(0.0f,1.0f,0.0f);
+			//上へ少し回転β
+			transform.Rotate( 1, 0, 0);
+		}
+
+		//下移動(s)
+		if(Input.GetKey("s")){
+			//下へ移動
+			//transform.Translate(0.0f,-1.0f,0.0f);
+			//下に少し回転β
+			transform.Rotate( -1, 0, 0);
+		}
+
+		//右移動(d)
+		if(Input.GetKey("d")){
+			//右へ移動
+			transform.Translate(1.0f,0.0f,0.0f);
+			//右に少し回転β
+			transform.Rotate( 0, 0, 1);
+		}
+		
+		//左移動(a)
+		if(Input.GetKey("a")){
+			//左へ移動
+			transform.Translate(-1.0f,0.0f,0.0f);
+			//左に少し回転β
+			transform.Rotate( 0, 0, -1);			
+		}
+
+		//スピードアップ(e)
+		if(Input.GetKey("e")){
+			//スピードをアップ
+			speed += 1.0f;
+			//スピードが3488以上ならば、
+			if(speed >= 3488){
+				//3488に固定する
+				speed = 3488;
+			}
+		}
+		//スピードダウン(q)
+		if(Input.GetKey("q")){
+			//スピードをダウン
+			speed -= 1.0f;
+			//スピードを351以下ならば、
+			if(speed <= 351){
+				//351に固定する
+				speed = 351;
+			}
+		}
+		
+		if(Input.GetKeyDown("y")){
+			speed = 0.0f;
+		}
+
+		//カメラの変更(Space)
+		if(Input.GetKeyDown(KeyCode.Space)){
+			//tps_cameraがONならば、
+			if(tps_camera.camera.enabled == true){
+				//tpsカメラをOFF、
+				tps_camera.camera.enabled = false;
+				//fpsカメラをONにする。
+				fps_camera.camera.enabled = true;
+			//tps_cameraがOFFならば、
+			}else if(tps_camera.camera.enabled == false){
+				//tpsカメラをON、
+				tps_camera.camera.enabled = true;
+				//fpsカメラをOFFにする。
+				fps_camera.camera.enabled = false;
+			}
+		}
+
+		//テストコード
+		//場所とスピードの初期化(r)
+		if(Input.GetKeyDown("r")){
+			//スピードを0に初期化
+			speed = 0.0f;
+			//playerを0,0,0に場所を初期化
+			transform.position = Vector3.zero;
+		}
+		
+		/*
+		//テストコード
+		//Enemyオブジェクトの再生成
+		if(Input.GetKeyDown("f")){
+			//テストコード
+			//Instantiate(enemy[0],new Vector3(0,0,20),Quaternion.Euler(0,0,0));
+			//Instantiate(enemy[1],new Vector3(5,0,20),Quaternion.Euler(0,0,0));
+			//Instantiate(enemy[2],new Vector3(10,0,20),Quaternion.Euler(0,0,0));
+			//Instantiate(enemy[3],new Vector3(0,5,20),Quaternion.Euler(0,0,0));
+			//Instantiate(enemy[4],new Vector3(5,5,20),Quaternion.Euler(0,0,0));
+			//Instantiate(enemy[5],new Vector3(10,5,20),Quaternion.Euler(0,0,0));
+			//Instantiate(enemy[7],new Vector3(0,10,20),Quaternion.Euler(0,0,0));
+		}
+		*/
+
+
+		//ロックオン切り替え
+		if(Input.GetKeyDown("f")){
+			// ロックオンする対象がいるのかの判定
+			// false:いない
+			bool rockon_enemys = false;
+
+			//ループ　
+			for(int i = 0;i < 4;i++){
+				//ロックオンした対象を検索
+				if(enemy_rockon[i]){
+					// ロックオンを解除
+					enemy_rockon[i] = false;
+					// ループして、enemy_can_rockon == trueを探す
+					for(int j = (i+1);j < 4; j++){
+						// enemy_can_rockonがtrueなら
+						if(enemy_can_rockon[j]){
+							//enemy_rockon[i+1(j)]をtrueにする
+							enemy_rockon[j] = true;
+							// テストコード
+							// Debug.Log("Player.cs:in f Key(for)");
+							// Debug.Log(j);
+							break;
+						}
+					}
+					//対象がいたので真にする
+					rockon_enemys = true;
+					i_num = i;
+					break;
+				}
+			}
+
+			// 配列が最後に来たので
+			if(!rockon_enemys){
+				//テストコード
+				//Debug.Log("Player.cs:in f Key(if)");
+				// ループしてロックオン可能な物体を探す
+				for(int i = 0;i < 4;i++){
+					// ロックオン可能ならば
+					if(enemy_can_rockon[i]){
+						//ロックオン可能にする。
+						enemy_rockon[i] = true;
+						i_num = i;
+						break;
+					}
+
+				}
+			}
+		}
+	}
+
+	void OnGUI()
+	{	
+		//+方向に傾いている場合
+		if(transform.rotation.x >= 270 && transform.rotation.x <= 90){
+			player_direction = true;
+		//-方向に傾いている場合
+		}else{
+			player_direction = false;
+		}
+
+		//敵機につくマークとロックオンに関するコード
+		for(int i = 0; i < 4;i++){
+			// カメラ内オブジェクトの座標に関する処理
+			// 自分と敵の座標の差を代入
+			// WorldToScreenPoint:スクリーン座標を受け取る。
+			// ここで、2時間
+			// スクリーン上の座標 = fpsカメラから見たenemy[i]の場所を算出する。
+
+			// ※変更
+			//Debug.Log("Enemy = "+ enemy[i].transform.position);
+			//Debug.Log("WorldToScreenPoint =" + fps_camera.camera.WorldToScreenPoint(enemy[i].transform.position));
+
+			// tpsカメラがオンならば
+			if(tps_camera.camera.enabled == true){
+				// tpsカメラ上のスクリーン座標を取得する
+				coordinate_enemy[i] = tps_camera.camera.WorldToScreenPoint(enemy[i].transform.position);
+			}else{
+				// fpsカメラ上のスクリーン座標を取得する
+				coordinate_enemy[i] = fps_camera.camera.WorldToScreenPoint(enemy[i].transform.position);
+			}
+
+			//GUI.Label(new Rect(coordinate_enemy[i].x, coordinate_enemy[i].y, 200, 50),coordinate_enemy[i].x + "," + coordinate_enemy[i].y); 
+	
+			//ロックオンマークを合わせる為、0.5マイナス(仮)
+			//coordinate_enemy[i].x -= 23.7f; 
+			//coordinate_enemy[i].y -= 10.5f;
+			//一応
+			//between_distance_coordinate[i].z -= 0.5f;
+			//coordintate_enemy[i] = Vector3.right * 180;
+
+			// 距離を求める
+		 	between_distance[i] = Vector3.Distance(transform.position,enemy[i].transform.position);
+			
+			//
+			//
+			//
+			// Danger：このコードは理解していません。
+			// 	 ：大変危険なコードです。なぜか動きました。
+			// 	 ：追記　バグりました。
+			// 	 ：追記　なおりました。
+			//
+
+			// playerが+の方向に向かっている場合
+			if(player_direction){
+				// z軸の差が座標が大きくなっている場合
+				if(coordinate_enemy_backup[i].z >= coordinate_enemy[i].z){
+					//視認可能
+					enemy_can_display[i] = true;
+				}else{
+					enemy_can_display[i] = false;
+				}
+			//playerが-の方向に向かっている場合
+			}else{
+				// z軸の差が座標が小さくなっている場合
+				if(coordinate_enemy_backup[i].z <= coordinate_enemy[i].z){
+					// 視認可能
+					enemy_can_display[i] = true;
+				}else{
+					enemy_can_display[i] = false;
+				}
+			}
+
+			//仮の数値
+			//enemyを視認できるかつ距離が10000(仮)以下の場合
+			if(enemy_can_display[i] && (between_distance[i] <= 10000)){
+				enemy_can_rockon[i] = true;
+			}else{
+				enemy_can_rockon[i] = false;
+			}
+
+			// 敵がロックオンできる＆ロックオンマークがついている場合
+			if(enemy_can_display[i] && enemy_rockon[i]){
+				// なぜかこれで出来た
+				// ロックオンマークを描画
+				GUI.DrawTextureWithTexCoords(new Rect(coordinate_enemy[i].x - 25,Screen.height - coordinate_enemy[i].y - 25,50,50),rockon,new Rect(0,0,1,1));
+				// 速度を描画
+				GUI.Label(new Rect(coordinate_enemy[i].x + 15,Screen.height - coordinate_enemy[i].y - 25,
+							((int)between_distance[i]).ToString().Length * 10.0f,20.0f),((int)between_distance[i]).ToString());
+			//敵がロックオンできる場合
+			}else if(enemy_can_display[i]){
+				// なぜかこれで出来た
+				// 敵機にマークを描画
+				GUI.DrawTextureWithTexCoords(new Rect(coordinate_enemy[i].x - 25,Screen.height - coordinate_enemy[i].y - 25,50,50),enemy_mark,new Rect(0,0,1,1));
+				// 速度を描画
+				GUI.Label(new Rect(coordinate_enemy[i].x + 15,Screen.height - coordinate_enemy[i].y - 25,
+							((int)between_distance[i]).ToString().Length * 10.0f,20.0f),((int)between_distance[i]).ToString());
+			}
+			
+			// わけわからん
+			//coordinate_enemy_backup[i] = coordinate_enemy[i];
+			//GUI.DrawTextureWithTexCoords(new Rect(coordinate_enemy[i].x - 25,Screen.height - coordinate_enemy[i].y - 25,50,50),enemy_mark,new Rect(0,0,1,1));
+
+		}
+
+		// ループ
+		for(int i = 0;i <= 4;i++){
+			// 4回目に、
+			if(i == 4){
+				// ロックオンできる物体を探し
+				for(int j = 0;j < 4;j++){
+					// ロックオンできる物体が見つかれば、
+					if(enemy_can_rockon[j]){
+						// ロックオン
+						enemy_rockon[j] = true;
+						break;
+					}
+				}
+				break;
+			}
+
+			//ロックオンした対象を検索
+			if(enemy_rockon[i]){
+				break;
+			}
+		}
+
+		//照準を描画
+		GUI.DrawTextureWithTexCoords(new Rect(Screen.width / 2 - 128 / 2,Screen.height / 2 - 128 / 2 ,128,128),mark,new Rect(0,0,1,1));
+
+		//テストコード
+		GUI.Label(new Rect(Screen.width - 100,0, 400, 50),"Speed:");
+		speed = float.Parse(GUI.TextField(new Rect(Screen.width - 50, 0, 200, 20),speed.ToString(),4));
+
+		//本番コード
+		//スピードメーター
+		//GUI.Label(new Rect(  5,  0, 400, 50),"Speed:"+speed.ToString());
+		//戦闘時に得た金
+		GUI.Label(new Rect(Screen.width - 100, 15, 400, 50),"Gold:" + gold.ToString());
+		//敵を倒したときに得られる金
+		GUI.Label(new Rect(Screen.width - 100, 30, 400, 50),"EnemyGold:" + enemy_gold.ToString());
+		//テストコード・デバッグモード
+		//自分の機体の位置
+		GUI.Label(new Rect(0, 0, 400, 50),"Position:" + transform.position);
+
+		//テストコード
+		//操作説明
+		//GUI.Label(new Rect(560,  0, 400, 50),"i:Gun");
+		//GUI.Label(new Rect(560, 15, 400, 50),"l:Missaile");
+		//GUI.Label(new Rect(560, 30, 400, 50),"w:Down");
+		//GUI.Label(new Rect(560, 45, 400, 50),"s:Up");
+		//GUI.Label(new Rect(560, 60, 400, 50),"d:Right");
+		//GUI.Label(new Rect(560, 75, 400, 50),"a:Left");
+		//GUI.Label(new Rect(560, 90, 400, 50),"e:SpeedUp");
+		//GUI.Label(new Rect(560,105, 400, 50),"q:SpeedDown");
+		//GUI.Label(new Rect(560,120, 400, 50),"space:TPS/FPS");
+		//GUI.Label(new Rect(5,210, 400, 50),"i:銃");
+		//GUI.Label(new Rect(5,225, 400, 50),"i:銃");
+		//GUI.Label(new Rect(5,240, 400, 50),"i:銃");				
+	}
+
+	void OnCollisionEnter(Collision col){
+		print("On Collision");
+		
+		if(!(col.gameObject.name == "Gun(Clone)" || col.gameObject.name == "Missaile(Clone)")){
+			Destroy(gameObject);
+			print("Player Died!!");
+		}
+	}
+}

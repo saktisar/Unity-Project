@@ -1,0 +1,30 @@
+using UnityEngine;
+using System.Collections;
+
+public class Script : MonoBehaviour {
+	public GUISkin Title;
+
+	// Use this for initialization
+	void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () {
+	
+	}
+	
+	//GUIに関わる処理を行う
+	void OnGUI(){
+		//背景を管理する変数
+		GUIStyle background = Title.FindStyle("Background");
+		//タイトルを管理する変数
+		GUIStyle title = Title.FindStyle("Title");
+		//スタートボタンを管理する変数
+		GUIStyle start = Title.FindStyle("Start");
+		//設定ボタンを管理する変数
+		GUIStyle setting = Title.FindStyle("Setting");
+		//セーブデータ転送ボタンを管理する変数
+		GUIStyle savedate = Title.FindStyle("Savedate");
+	}
+}

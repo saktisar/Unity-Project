@@ -1,0 +1,210 @@
+//プレイヤー（機体）につけるスクリプト
+
+using UnityEngine;
+using System.Collections;
+
+public class Player : MonoBehaviour{
+	//弾をいれる変数
+	public GameObject gun;
+
+	//ミサイルをいれる変数
+	public GameObject missaile;
+		
+	//TPSカメラをいれる変数
+	GameObject tps_camera;
+		
+	//FPSカメラを入れる変数
+	GameObject fps_camera;
+
+	//スピードを管理する変数
+	float speed = 600.0f;
+
+	//戦闘時に得た金を管理する変数
+	int gold = 0;
+
+	//敵を倒した時に得られる金の変数
+	int enemy_gold = 0;
+
+	//テストコード
+	public GameObject enemy;
+	
+	//変数を初期化する関数
+	void Awake(){
+		//tpsカメラを探す
+		tps_camera = GameObject.Find("TPS Camera");
+		//fpsカメラを探す
+		fps_camera = GameObject.Find("FPS Camera");
+		/* gun,missaile,enemyオブジェクトは、Unityではりつけ。*/
+	}
+
+	void Start()
+	{
+		//カメラの設定
+		//tpsカメラを有効化
+		tps_camera.camera.enabled = true;
+		//fpsカメラを無効化
+		fps_camera.camera.enabled = false;
+
+		//テストコード
+		//スピードを0に初期化
+		speed = 0.0f;
+
+		//テストコード
+		//playerを0,0,0に場所を初期化
+		transform.position = Vector3.zero;
+	}
+
+	void Update()
+	{	
+		//テストコード
+		//print("test");
+	
+		//playerを移動
+		transform.Translate(0,0,speed/1000.0f);		
+
+		//テストコード
+		//カメラの移動
+		//tps_camera.transform.Translate(0.0f,0.0f,speed);
+		
+		//もし、"i"を押し続けていれば、
+		if(Input.GetKey("i")){
+			//gunオブジェクトのクローンを生成
+			Instantiate(gun,transform.position,transform.rotation);
+		}
+		//もし、"l"を押していれば、
+		if(Input.GetKeyDown("l")){
+			//missaileオブジェクトのクローンを生成
+			Instantiate(missaile,transform.position,transform.rotation);
+		}
+
+		//移動の設定
+		//上移動(w)
+		if(Input.GetKey("w")){
+			//上へ移動
+			//transform.Translate(0.0f,1.0f,0.0f);
+			//上へ少し回転β
+			transform.Rotate( 1, 0, 0);
+		}
+
+		//下移動(s)
+		if(Input.GetKey("s")){
+			//下へ移動
+			//transform.Translate(0.0f,-1.0f,0.0f);
+			//下に少し回転β
+			transform.Rotate( -1, 0, 0);
+		}
+		
+		//右移動(d)
+		if(Input.GetKey("d")){
+			//右へ移動
+			transform.Translate(1.0f,0.0f,0.0f);
+			//右に少し回転β
+			transform.Rotate( 0, 0, 1);
+		}
+		
+		//左移動(a)
+		if(Input.GetKey("a")){
+			//左へ移動
+			transform.Translate(-1.0f,0.0f,0.0f);
+			//左に少し回転β
+			transform.Rotate( 0, 0, -1);			
+		}
+
+		//スピードアップ(e)
+		if(Input.GetKey("e")){
+			//スピードをアップ
+			speed += 1.0f;
+			//スピードが3488以上ならば、
+			if(speed >= 3488){
+				//3488に固定する
+				speed = 3488;
+			}
+		}
+		//スピードダウン(q)
+		if(Input.GetKey("q")){
+			//スピードをダウン
+			speed -= 1.0f;
+			//スピードを351以下ならば、
+			if(speed <= 351){
+				//351に固定する
+				speed = 351;
+			}
+		}
+		
+		//カメラの変更(Space)
+		if(Input.GetKeyDown(KeyCode.Space)){
+			//tps_cameraがONならば、
+			if(tps_camera.camera.enabled == true){
+				//tpsカメラをOFF、
+				tps_camera.camera.enabled = false;
+				//fpsカメラをONにする。
+				fps_camera.camera.enabled = true;
+			//tps_cameraがOFFならば、
+			}else if(tps_camera.camera.enabled == false){
+				//tpsカメラをON、
+				tps_camera.camera.enabled = true;
+				//fpsカメラをOFFにする。
+				fps_camera.camera.enabled = false;
+			}
+		}
+
+		//テストコード
+		//場所とスピードの初期化(r)
+		if(Input.GetKeyDown("r")){
+			//スピードを0に初期化
+			speed = 0.0f;
+			//playerを0,0,0に場所を初期化
+			transform.position = Vector3.zero;
+		}
+		
+		//テストコード
+		//Enemyオブジェクトの再生成
+		if(Input.GetKeyDown("f")){
+			Instantiate(enemy,new Vector3(0,0,20),Quaternion.Euler(0,0,0));
+		}
+		
+	}
+
+	void OnGUI()
+	{
+		//テストコード
+		GUI.Label(new Rect(0,  0, 400, 50),"Speed:");
+		speed = float.Parse(GUI.TextField(new Rect(50, 0, 200, 20),speed.ToString(),4));
+
+		//本番コード
+		//スピードメーター
+		//GUI.Label(new Rect(  5,  0, 400, 50),"Speed:"+speed.ToString());
+		//戦闘時に得た金
+		GUI.Label(new Rect(  0, 15, 400, 50),"Gold:" + gold.ToString());
+		//敵を倒したときに得られる金
+		GUI.Label(new Rect(  0, 30, 400, 50),"EnemyGold:" + enemy_gold.ToString());
+		//テストコード・デバッグモード
+		//自分の機体の位置
+		GUI.Label(new Rect(  0, 45, 400, 50),"Position:" + transform.position);
+		//テストコード
+		//操作説明
+		GUI.Label(new Rect(560,  0, 400, 50),"i:Gun");
+		GUI.Label(new Rect(560, 15, 400, 50),"l:Missaile");
+		GUI.Label(new Rect(560, 30, 400, 50),"w:Up");
+		GUI.Label(new Rect(560, 45, 400, 50),"s:Down");
+		GUI.Label(new Rect(560, 60, 400, 50),"d:Right");
+		GUI.Label(new Rect(560, 75, 400, 50),"a:Left");
+		GUI.Label(new Rect(560, 90, 400, 50),"e:SpeedUp");
+		GUI.Label(new Rect(560,105, 400, 50),"q:SpeedDown");
+		GUI.Label(new Rect(560,120, 400, 50),"space:TPS/FPS");
+		//GUI.Label(new Rect(5,210, 400, 50),"i:銃");
+		//GUI.Label(new Rect(5,225, 400, 50),"i:銃");
+		//GUI.Label(new Rect(5,240, 400, 50),"i:銃");				
+	}
+
+	void OnCollisionEnter(Collision col){
+		print("On Collision");
+		
+		if(!(col.gameObject.name == "Gun(Clone)" || col.gameObject.name == "Missaile(Clone)")){
+			Destroy(gameObject);
+			print("Player Died!!");
+		}
+	}
+}
+
+
