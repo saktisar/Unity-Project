@@ -1,3 +1,5 @@
+// encoding : UTF-16
+
 //プレイヤー（機体）につけるスクリプト
 /****************************************************************************************************************************************
 // ここは、メモ(役に立たなかった)
@@ -8,6 +10,13 @@
 // 純粋スピード値 - 純粋なスピードの値(高度は関係ない) - ok																 	
 // スピード値 		- (スピード加減値 + (高度値の計算) + 純粋スピード値) で求まる実際のスピード値 	- こいつは変数を持たない(関数で返す)
 ******************************************************************************************************************************************/
+
+
+/*****************************************************************************************************************************************
+// スピードの求め方
+// speed = speed基準値(600)
+// speed += (スピード基本加減値 - 高高度補正値 + カメラ加減値 + エンジン加減値)
+*****************************************************************************************************************************************/
 //
 // スピードの加減値は存在しない(スピードの加減は関数で行う)
 using UnityEngine;
@@ -55,9 +64,10 @@ public class Player : MonoBehaviour{
 	// 高度
 	int altitude;
 	// 最大高度 - ストール(自機が落ちる)する値の設定
-	int altitude_maximum;
+	float altitude_maximum;
 	// スピードを下げる高度
 	int speed_down_altitude;
+	float high_altitude_down_speed = 0.4f;
 	//
 	// 最小高度 - いらない、最小高度は、0だから
 	// float altitude_minimum;
@@ -66,6 +76,9 @@ public class Player : MonoBehaviour{
 	 * スピードに関する変数
 	 */
 	// 総合スピード値
+	//
+	// speed = speed基準値(600)
+	//
 	float speed = 600.0f;
 	// 高度によるスピード値
 	// float altitude_speed;
@@ -85,7 +98,14 @@ public class Player : MonoBehaviour{
 	float speed_base;
 	// スピード加減値 - 加速または、減速をすると、変わる値
 	int speed_up_down;
-	
+	//
+	// スピード基本加減値
+	// 
+	float default_speed_up_down = 1.0f;
+	//
+	// エンジン加減値
+	//
+	float engine_up_down;
 	/*
 	 * 敵の金に関する変数
 	 */
@@ -232,7 +252,7 @@ public class Player : MonoBehaviour{
 		 * 高度に関する処理
 		 */
 		altitude_maximum = 10000;
-		speed_down_altitude = 7000;
+		speed_down_altitude = 8000;
 		
 		// gun_particleを無効化
 		gun_particle.active = false;
@@ -257,19 +277,48 @@ public class Player : MonoBehaviour{
 		// transform.position = Vector3.zero;
 		
 		// スピード
-		speed = 600.0f;
+		// speed = 600.0f;
 	}
 
 	void Update()
 	{	
-		/*
-		 *
-		 * 高度に関する処理
-		 *
-		 */
 		// 高度の決定
 		altitude = ((int)transform.position.y) * 100;
-
+		Debug.Log(altitude);
+		/*
+		Debug.Log(	
+				(
+			 		((altitude - speed_down_altitude) > 0) ? 
+					(high_altitude_down_speed * (altitude / ((altitude - speed_down_altitude) / (altitude_maximum - speed_down_altitude)))) : 0
+				) 
+			);
+		Debug.Log(
+			default_speed_up_down - 
+			(
+			 ((altitude - speed_down_altitude) > 0) ? 
+			 (high_altitude_down_speed * (altitude / ((altitude - speed_down_altitude) / (altitude_maximum - speed_down_altitude)))) : 0
+			) - 0
+				);
+		*/
+		/*
+		 *
+		 * スピードに関する処理
+		 *
+		 */
+		//
+		//
+		// speed += (高高度補正値 + カメラ加減値 + エンジン加減値)	
+		//
+		//
+		if((altitude - speed_down_altitude) > 0){
+			if(player_direction == true){
+				// Debug.Log("player_direction == true : " + (speed -= high_altitude_down_speed * ((altitude - speed_down_altitude) / (altitude_maximum - speed_down_altitude))));
+				// speed -= high_altitude_down_speed * ((altitude - speed_down_altitude) / (altitude_maximum - speed_down_altitude));
+			}else{
+				// Debug.Log("player_direction == false : " + (speed += high_altitude_down_speed * ((altitude - speed_down_altitude) / (altitude_maximum - speed_down_altitude))));
+				// speed += high_altitude_down_speed * ((altitude - speed_down_altitude) / (altitude_maximum - speed_down_altitude));
+			}
+		}	
 		/******************************************************************
 		 *
 		 *
@@ -542,12 +591,12 @@ public class Player : MonoBehaviour{
 				speed = speed + 1.0f;
 			}
 			*/
-			speed = speed + 1.0f;
+			speed += default_speed_up_down;
 		}
 		// スピードダウン(q)
 		if(Input.GetKey("q")){
 			// スピードをダウン
-			speed = speed - 1.0f;
+			speed -= default_speed_up_down;
 		}
 		
 		/*
