@@ -23,6 +23,8 @@ using UnityEngine;
 using System.Collections;
 
 public class Player : MonoBehaviour{
+	[SerializeField]
+	PlayerControll playercontroll;
 	/*************************************************************
 	 * 変数の宣言
 	 *************************************************************/
@@ -342,7 +344,6 @@ public class Player : MonoBehaviour{
 			Altitude_Speed(altitude);
 		}
 		*/
-
 		/******************************************************************
 		 *
 		 *
@@ -490,6 +491,16 @@ public class Player : MonoBehaviour{
 		//tps_camera.transform.Translate(0.0f,0.0f,speed);
 		
 		/*
+		 * 移動の処理
+		 */
+		// 移動に関する処理
+		float x = Input.GetAxis("Horizontal");
+		float y = Input.GetAxis("Vertical");
+		
+		playercontroll.Pitch(y);
+		playercontroll.Roll(x);
+
+		/*
 		 * ミサイルと、銃のスクリプト
 		 */
 		//もし、"i"を押し続けていれば、
@@ -529,43 +540,12 @@ public class Player : MonoBehaviour{
 			gun_particle.active = false;
 		}
 		*/
-		/*
-		 * 移動の処理
-		 */
-		//上移動(w)
-		if(Input.GetKey("w")){
-			//上へ移動
-			//transform.Translate(0.0f,1.0f,0.0f);
-			//上へ少し回転β
-			transform.Rotate( 1, 0, 0);
-			camera_height += 0.01f;
-		
-		}
-		//下移動(s)
-		if(Input.GetKey("s")){
-			//下へ移動
-			//transform.Translate(0.0f,-1.0f,0.0f);
-			//下に少し回転β
-			transform.Rotate( -1, 0, 0);
-			camera_height += 0.01f;			
-		}
-		//右移動(d)
-		if(Input.GetKey("d")){
-			//右へ移動
-			transform.Translate(1.0f,0.0f,0.0f);
-			//右に少し回転β
-			transform.Rotate( 0, 0, 1);
-			camera_width -= 0.01f;
-		}
-		//左移動(a)
-		if(Input.GetKey("a")){
-			//左へ移動
-			transform.Translate(-1.0f,0.0f,0.0f);
-			//左に少し回転β
-			transform.Rotate( 0, 0, -1);	
-			camera_width += 0.01f;
-		}
 
+		// ロール(ミサイル回避などに使う)β
+		if (Input.GetKey("2")){
+			transform.Rotate(0,0,-3);
+		}
+		
 		/* 
 		 * スピードに関する処理
 		 */
