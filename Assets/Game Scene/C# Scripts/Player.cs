@@ -339,22 +339,7 @@ public class Player : MonoBehaviour{
 		*/
 		// スピードを表示
 		// print(speed);
-
-		/*
-		 * 最大スピードと最小スピードを制御する処理
-		 */
-		//スピードが最大以上ならば、
-		if(speed >= speed_maximum){
-			// 最大にする
-			speed = speed_maximum;
-		}
-
-		// スピードが最小以下ならば、
-		if(speed < speed_minimum){
-			// 最小に固定する
-			speed = speed_minimum;
-		}
-
+		
 		/**************************************************************************************
 		 *
 		 *

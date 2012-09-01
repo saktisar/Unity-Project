@@ -61,6 +61,7 @@ public class PlayerRockon : MonoBehaviour {		// Use this for initialization
 		// ロックオンマークをロード
 		rockon = (Texture2D)Resources.Load("Image/Rockon");
 	}
+
 	void Start () {
 		/*
 		 * tpsカメラを有効化して、fpsカメラを無効化

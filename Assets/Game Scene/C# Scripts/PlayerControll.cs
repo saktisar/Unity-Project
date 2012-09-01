@@ -25,6 +25,35 @@ public class PlayerControll : MonoBehaviour {
 		transform.position = transform.position + (transform.forward * speed) * Time.deltaTime;
 		transform.localRotation = transform.localRotation * new Quaternion(pitch, 0, 0, 1);
 		transform.localRotation = transform.localRotation * new Quaternion(0, 0, roll, 1);
+
+		/* 
+		 * スピードに関する処理
+		 */
+		//スピードアップ(e)
+		if(Input.GetKey("e")){
+			speed += 0.0001f;
+		}
+		// スピードダウン(q)
+		if(Input.GetKey("q")){
+			// スピードをダウン
+			speed -= 0.0001f;
+		}
+
+		/*
+		 * 最大スピードと最小スピードを制御する処理
+		 */
+		//スピードが最大以上ならば、
+		if(speed >= 6){
+			// 最大にする
+			speed = 6;
+		}
+
+		// スピードが最小以下ならば、
+		if(speed < 3){
+			// 最小に固定する
+			speed = 3;
+		}
+
 		roll *= 0.9f;
 		pitch *= 0.9f;
 	}
