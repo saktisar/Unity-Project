@@ -31,17 +31,18 @@ public class PlayerControll : MonoBehaviour {
 		 */
 		//スピードアップ(e)
 		if(Input.GetKey("e")){
-			speed += 0.0001f;
+			speed += 0.001f;
 		}
 		// スピードダウン(q)
 		if(Input.GetKey("q")){
 			// スピードをダウン
-			speed -= 0.0001f;
+			speed -= 0.001f;
 		}
 
 		/*
 		 * 最大スピードと最小スピードを制御する処理
 		 */
+		/*
 		//スピードが最大以上ならば、
 		if(speed >= 6){
 			// 最大にする
@@ -53,6 +54,7 @@ public class PlayerControll : MonoBehaviour {
 			// 最小に固定する
 			speed = 3;
 		}
+		*/
 
 		roll *= 0.9f;
 		pitch *= 0.9f;

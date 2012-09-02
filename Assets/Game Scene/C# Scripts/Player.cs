@@ -393,13 +393,6 @@ public class Player : MonoBehaviour{
 		//テストコード
 		//print("test");
 		
-		/*
-		 * プレイヤーの移動の処理
-		 */
-		// playerを移動
-		// playerは、1000km出ていると、1座標動く
-		transform.Translate(0,0,speed / 1000.0f);		
-
 		//テストコード
 		//カメラの移動
 		//tps_camera.transform.Translate(0.0f,0.0f,speed);
@@ -459,40 +452,7 @@ public class Player : MonoBehaviour{
 		if (Input.GetKey("2")){
 			transform.Rotate(0,0,-3);
 		}
-		
-		/* 
-		 * スピードに関する処理
-		 */
-		//スピードアップ(e)
-		if(Input.GetKey("e")){
-			/*
-			// 高度によるスピード値(正確にはスピード補正値)に代入
-			if(altitude >= speed_down_altitude){
-				// (高度 - スピードが下がる高度) : スピードが下がる高度と、高度の差がわかる
-				// (高度 - スピードが下がる高度) / 1000 : 計算上の問題
-				// (高度 / 1000) : 計算上の問題
-				// altitudeを、10000
-				// speed_down_altitudeを、7000、
-				// 
-				// ((10000 / 1000) - ((10000 - 7000) / 1000)) * 0.14f
-				// = (10 - 3) * 0.14f
-				// = 7 * 0.14f
-				// = 0.98f
-				Debug.Log("Player.cs : altitude >= speed_down_altitude");
-				speed = speed + 1.0f + 0.1f - ((altitude / 1000) - ((speed_down_altitude) / 1000));
-			}else{
-				Debug.Log("Player.cs :  altitude < speed_down_altitude");
-				speed = speed + 1.0f;
-			}
-			*/
-			speed += default_speed_up_down;
-		}
-		// スピードダウン(q)
-		if(Input.GetKey("q")){
-			// スピードをダウン
-			speed -= default_speed_up_down;
-		}
-		
+				
 		/*
 		 * スピード初期化の処理
 		 */

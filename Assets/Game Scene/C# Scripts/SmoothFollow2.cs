@@ -1,4 +1,4 @@
-// http://wiki.unity3d.com/index.php?title=SmoothFollow2 から転載。改良予定
+// http://wiki.unity3d.com/index.php?title=SmoothFollow2 から転載。改良。
 
 using UnityEngine;
 using System.Collections;
@@ -12,14 +12,14 @@ public class SmoothFollow2 : MonoBehaviour {
   public bool followBehind = true;
 	public float rotationDamping = 10.0f;
 
-  void Update () {
+	void Update () {
       Vector3 wantedPosition;
       if(followBehind)
             wantedPosition = target.TransformPoint(0, height, -distance);
       else
           	wantedPosition = target.TransformPoint(0, height, distance);
      
-      transform.position = Vector3.Lerp (transform.position, wantedPosition, Time.deltaTime * damping);
+    	transform.position = Vector3.Lerp (transform.position, wantedPosition, Time.deltaTime * damping);
 
       if (smoothRotation) {
             Quaternion wantedRotation = Quaternion.LookRotation(target.position - transform.position, target.up);
