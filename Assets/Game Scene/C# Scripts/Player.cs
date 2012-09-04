@@ -25,7 +25,7 @@ using System.Collections;
 public class Player : MonoBehaviour{
 	[SerializeField]
 	PlayerControll playercontroll;
-	PlayerRockon playergui;	
+	PlayerCamera playergui;	
 
 	//enemyオブジェクトを入れる変数
 	public static GameObject[] enemy = new GameObject[8];
@@ -38,20 +38,6 @@ public class Player : MonoBehaviour{
 	/*************************************************************
 	 * 変数の宣言
 	 *************************************************************/
-	/*
-	 * 弾、ミサイル、パーティクル等に関する変数
-	 */
-	//弾をいれる変数
-	public GameObject gun;
-	//ミサイルをいれる変数
-	public GameObject missaile;
-	// 銃を打つ際のパーティクルをいれる変数
-	public GameObject gun_particle;
-	// 銃の連射力に関する変数
-	// 数値が高いほど遅い
-	const int gun_rapid = 10;
-	// 銃の連射を管理する変数
-	int gun_rapid_num = -1;
 
 	/*
 	 * 高度に関する処理
@@ -191,8 +177,6 @@ public class Player : MonoBehaviour{
 		altitude_maximum = 10000;
 		speed_down_altitude = 8000;
 		
-		// gun_particleを無効化
-		gun_particle.active = false;
 	}
 
 	void Start()
@@ -407,31 +391,6 @@ public class Player : MonoBehaviour{
 		playercontroll.Pitch(y);
 		playercontroll.Roll(x);
 
-		/*
-		 * ミサイルと、銃のスクリプト
-		 */
-		//もし、"i"を押し続けていれば、
-		if(Input.GetKey("i") && gun_rapid_num == -1){
-			//gunオブジェクトのクローンを生成
-			Instantiate(gun,transform.position,transform.rotation);
-			// 銃の連射速度を決定
-			gun_rapid_num = gun_rapid;
-		}
-		//もし、"l"を押していれば、
-		if(Input.GetKeyDown("l")){
-			//missaileオブジェクトのクローンを生成
-			Instantiate(missaile,transform.position,transform.rotation);
-		}
-		if(gun_rapid_num != -1){
-			gun_particle.active = true;
-			gun_rapid_num --;
-			// 銃の処理の終了
-			if(gun_rapid_num == 0){
-				// 銃を打ってない事にする
-				gun_rapid_num = -1;
-				gun_particle.active = false;
-			}
-		}
 		/*
 		// gun_rapid_numが、gunより小さければ、
 		if(gun_rapid_num <= gun_rapid){
